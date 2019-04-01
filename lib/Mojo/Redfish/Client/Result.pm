@@ -1,6 +1,6 @@
 package Mojo::Redfish::Client::Result;
 
-use Mojo::Base -base, -signatures;
+use Mojo::Base -base;
 
 use Carp ();
 use Mojo::Collection;
@@ -12,13 +12,15 @@ my $isa = sub { Scalar::Util::blessed($_[0]) && $_[0]->isa($_[1]) };
 has client => sub { Carp::croak 'client is required' }, weak => 1;
 has data   => sub { Carp::croak 'data is required' };
 
-sub get ($self, $path = undef) {
+sub get {
+  my ($self, $path) = @_;
   return $self unless defined $path;
   my $target = Mojo::JSON::Pointer->new($self->data)->get($path);
   return $self->_get($target);
 }
 
-sub value ($self, $path = undef) {
+sub value {
+  my ($self, $path) = @_;
   return $self->data unless defined $path;
 
   my $target = Mojo::JSON::Pointer->new($self->data)->get($path);
@@ -31,7 +33,8 @@ sub value ($self, $path = undef) {
 
 sub TO_JSON { shift->data }
 
-sub _get ($self, $target) {
+sub _get {
+  my ($self, $target) = @_;
   return $target
     if $target->$isa('Mojo::Redfish::Client::Result');
 
@@ -52,10 +55,11 @@ sub _get ($self, $target) {
   return $self->client->get($target);
 }
 
-sub _clone ($self, $data = $self->data) {
+sub _clone {
+  my ($self, $data) = @_;
   $self->new(
     client => $self->client,
-    data   => $data,
+    data   => ($data // $self->data),
   );
 }
 
@@ -100,6 +104,10 @@ The result is always either a result object or a collection; use L</value> to ge
 
 Similar to L</get> this method takes a pointer to dive into the L</data> however the result is never fetched from the Redfish server and the value is not upgraded to a results object.
 Arrays are still upgraded to L<Mojo::Collection> objects.
+
+=head2 TO_JSON
+
+Alias for L</data> as a getter only.
 
 =head1 SEE ALSO
 

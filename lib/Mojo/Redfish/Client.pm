@@ -1,6 +1,6 @@
 package Mojo::Redfish::Client;
 
-use Mojo::Base -base, -signatures;
+use Mojo::Base -base;
 
 use Carp ();
 use Mojo::Collection;
@@ -14,11 +14,13 @@ has host => sub { Carp::croak 'host is required' };
 has ssl  => 1;
 has [qw/password token username/];
 
-has ua => sub ($self) {
+has ua => sub {
+  my $self = shift;
   my $ua = Mojo::UserAgent->new(insecure => 1);
 
   Scalar::Util::weaken $self;
-  $ua->on(prepare => sub ($ua, $tx) {
+  $ua->on(prepare => sub {
+    my ($ua, $tx) = @_;
     my $url = $tx->req->url;
     $url->host($self->host);
     $url->scheme($self->ssl ? 'https' : 'http');
@@ -32,25 +34,29 @@ has ua => sub ($self) {
   return $ua;
 };
 
-sub get ($self, $url) {
+sub get {
+  my ($self, $url) = @_;
   my $tx = $self->ua->get($url);
   if (my $err = $tx->error) { Carp::croak $err->{message} }
   my $data = $tx->res->json;
   return $self->_result($tx->res->json);
 }
 
-sub root ($self) {
+sub root {
+  my $self = shift;
   return $self->{root} ||= $self->get('/redfish/v1');
 }
 
-sub _result ($self, $data) {
+sub _result {
+  my ($self, $data) = @_;
   return Mojo::Redfish::Client::Result->new(
     data   => $data,
     client => $self,
   );
 };
 
-sub _userinfo ($self) {
+sub _userinfo {
+  my $self = shift;
   my ($user, $pass) = @{$self}{qw/username password/};
   return undef unless $user || $pass;
   return "$user:$pass";
