@@ -7,6 +7,9 @@ use Mojo::Collection;
 use Mojo::Redfish::Client::Result;
 use Scalar::Util ();
 
+our $VERSION = '0.01';
+$VERSION = eval $VERSION;
+
 has host => sub { Carp::croak 'host is required' };
 has ssl  => 1;
 has [qw/password token username/];
