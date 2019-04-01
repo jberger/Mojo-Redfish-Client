@@ -120,7 +120,7 @@ Username used for authentication by the default L</ua> (with L</password>).
 
 L<Mojo::Redfish::Client> inherits all methods from L<Mojo::Base> and implements the following new ones.
 
-=head1 get
+=head2 get
 
   my $result = $client->get('/redfish/v1/Systems');
 
@@ -128,7 +128,7 @@ Requests the requested url via the L</ua>.
 Returns an instance of L<Mojo::Redfish::Client::Result>.
 Dies on errors (the exact exception and behavior is subject to change).
 
-=head1 root
+=head2 root
 
   my $result = $client->root;
 
