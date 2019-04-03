@@ -26,7 +26,6 @@ L<Mojo::Redfish::Client> inherits all attributes from L<Mojo::Base> and implemen
 =head2 host
 
 The Redfish host.
-Required.
 
 =head2 password
 
@@ -34,7 +33,9 @@ Password used for authentication by the default L</ua> (with L</username>).
 
 =head2 ssl
 
-If true, the default L</ua> will establish the connection using SSL/TLS.
+If true, the default L</ua> will establish the connection using SSL/TLS by setting the request scheme to C<https>.
+If false, the request scheme will be C<http>.
+If not defined, the url scheme will not be set.
 Default is true.
 
 =head2 token
@@ -89,7 +90,7 @@ Session management
 
 =item *
 
-Testing
+Even more testing
 
 =back
 

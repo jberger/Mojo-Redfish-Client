@@ -7,7 +7,7 @@ use Mojo::Collection;
 use Mojo::Redfish::Client::Result;
 use Scalar::Util ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 $VERSION = eval $VERSION;
 
 has ssl  => 1;
@@ -162,7 +162,7 @@ Session management
 
 =item *
 
-Testing
+Even more testing
 
 =back
 
