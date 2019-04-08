@@ -57,7 +57,8 @@ is $root->value('/Systems/@odata.id'), '/redfish/v1/Systems', 'got expected resu
 
 $client->token('mytoken');
 
-my $systems = $root->get('/Systems');
+my $systems;
+$root->get_p('/Systems')->then(sub{ $systems = shift })->wait;
 isa_ok $systems, 'Mojo::Redfish::Client::Result', 'got a result object';
 ok !$user, 'no username';
 ok !$pass, 'no password';
@@ -68,7 +69,8 @@ is_deeply $systems->value('/Members')->to_array, [
   {'@odata.id' => '/redfish/v1/Systems/1'},
 ], 'value does not expand arrays';
 
-my $members = $systems->get('/Members');
+my $members;
+$systems->get_p('/Members')->then(sub{ $members = shift })->wait;
 isa_ok $members, 'Mojo::Collection', 'got a collection';
 is $members->[0]->value('/@odata.id'), '/redfish/v1/Systems/0', 'got expected result';
 is $members->[0]->value('/data'), 'some data: 0', 'got expected result';
