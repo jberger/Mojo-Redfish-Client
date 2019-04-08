@@ -8,7 +8,7 @@ use Mojo::Promise;
 use Mojo::Redfish::Client::Result;
 use Scalar::Util ();
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 $VERSION = eval $VERSION;
 
 has concurrency => 5;
@@ -191,15 +191,7 @@ Future work will include
 
 =item *
 
-Non-blocking (promise-based) api
-
-=item *
-
 Session management
-
-=item *
-
-Even more testing
 
 =back
 
