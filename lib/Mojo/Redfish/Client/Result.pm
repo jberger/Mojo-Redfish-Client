@@ -72,7 +72,9 @@ sub _get_p {
     if $target->$isa('Mojo::Collection');
 
   if (ref $target eq 'ARRAY') {
-    return Mojo::Promise->map(sub{ $self->_get_p($_) }, @$target)
+    my %opt;
+    if (my $c = $self->client->concurrency) { $opt{concurrency} = $c }
+    return Mojo::Promise->map(\%opt, sub{ $self->_get_p($_) }, @$target)
       ->then(sub{ Mojo::Collection->new(map { $_->[0] } @_) });
   }
 

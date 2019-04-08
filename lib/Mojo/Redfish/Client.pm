@@ -11,7 +11,8 @@ use Scalar::Util ();
 our $VERSION = '0.02';
 $VERSION = eval $VERSION;
 
-has ssl  => 1;
+has concurrency => 5;
+has ssl => 1;
 has [qw/host password token username/];
 
 has ua => sub {
@@ -114,6 +115,14 @@ This is still a work-in-progress, however the author uses it in work application
 =head1 ATTRIBUTES
 
 L<Mojo::Redfish::Client> inherits all attributes from L<Mojo::Base> and implements the following new ones.
+
+=head2 concurrency
+
+The B<per-operation> concurrency limit.
+This is not a global concurrency, it only limits concurrency when a single operation would make several concurrent requests within it.
+For example (and the only current case), L<Mojo::Redfish::Client/get_p> on an array.
+If zero (or otherwise falsey), no concurrency limit will be applied.
+Default is C<5>.
 
 =head2 host
 
