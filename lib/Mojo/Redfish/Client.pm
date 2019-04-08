@@ -4,6 +4,7 @@ use Mojo::Base -base;
 
 use Carp ();
 use Mojo::Collection;
+use Mojo::Promise;
 use Mojo::Redfish::Client::Result;
 use Scalar::Util ();
 
@@ -48,9 +49,28 @@ sub get {
   return $self->_result($tx->res->json);
 }
 
+sub get_p {
+  my ($self, $url) = @_;
+  $self->ua->get_p($url)->then(sub{
+    my $tx = shift;
+    if (my $err = $tx->error) { Carp::croak $err->{message} }
+    my $data = $tx->res->json;
+    return $self->_result($tx->res->json);
+  });
+}
+
 sub root {
   my $self = shift;
   return $self->{root} ||= $self->get('/redfish/v1');
+}
+
+sub root_p {
+  my $self = shift;
+  return Mojo::Promise->resolve($self->{root})
+    if $self->{root};
+  return $self->get_p('/redfish/v1')->then(sub{
+    return $self->{root} = shift;
+  });
 }
 
 sub _result {
@@ -135,6 +155,10 @@ Requests the requested url via the L</ua>.
 Returns an instance of L<Mojo::Redfish::Client::Result>.
 Dies on errors (the exact exception and behavior is subject to change).
 
+=head2 get_p
+
+Same as L</get> but returns a L<Mojo::Promise> that resolves to the result.
+
 =head2 root
 
   my $result = $client->root;
@@ -144,6 +168,10 @@ Caches and returns the result.
 
   # same as (except for the caching)
   my $result = $client->get('/redfish/v1');
+
+=head2 root_p
+
+Same as L</root> but returns a L<Mojo::Promise> that resolves to the (possibly cached) root result.
 
 =head1 FUTURE WORK
 
